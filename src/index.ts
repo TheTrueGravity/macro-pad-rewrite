@@ -1,1 +1,24 @@
-console.log("Hello, world!")
+import { config } from 'dotenv'
+import { argParse } from './args'
+import { pluginParse } from './plugins'
+
+config()
+const args = argParse("", [
+    {
+        name: '--debug',
+        alias: '-d',
+        options: {
+            action: 'store_true',
+            help: "Enable debug"
+        }
+    }
+])
+process.env.DEBUG = "0"
+if (args.debug) process.env.DEEBUG = "1"
+
+async function run() {
+    const plugins = await pluginParse()
+    console.log(plugins)
+}
+
+run()

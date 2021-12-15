@@ -1,0 +1,8 @@
+{
+    "name": "example",
+    "requires": [
+        "fs",
+        "node",
+        "child_process"
+    ]
+}

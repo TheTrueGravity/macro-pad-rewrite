@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node build/index.js",
-    "test": "npm run build && npm build/index.ts --debug"
+    "test": "npm run build && node build/index.js --debug"
   },
   "repository": {
     "type": "git",
@@ -17,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/TheTrueGravity/macro-pad-rewrite/issues"
   },
-  "homepage": "https://github.com/TheTrueGravity/macro-pad-rewrite#readme"
+  "homepage": "https://github.com/TheTrueGravity/macro-pad-rewrite#readme",
+  "dependencies": {
+    "@types/argparse": "^2.0.10",
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^16.11.13",
+    "argparse": "^2.0.1",
+    "child_process": "^1.0.2",
+    "dotenv": "^10.0.0",
+    "fs": "^0.0.1-security",
+    "node": "^17.2.0",
+    "typescript-require": "^0.3.0"
+  }
 }
