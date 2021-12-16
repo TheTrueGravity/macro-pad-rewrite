@@ -43,7 +43,7 @@ function pluginParse() {
         const _plugins = (0, fs_1.readdirSync)(pluginFolder);
         for (const plugin of _plugins) {
             console.log(plugin, (0, fs_1.readdirSync)(path.join(pluginFolder, plugin)));
-            const config = require(pluginFolder + plugin + "config.json");
+            const config = require(pluginFolder + '/' + plugin + "/config.json");
             if (debug)
                 console.log(`Installing dependecies for ${plugin}!`);
             const { stdout, stderr } = yield (0, child_process_1.exec)(`npm i ${config.requires.toString().replace(/,/g, ' ')}`);
