@@ -27,6 +27,7 @@
     "dotenv": "^10.0.0",
     "fs": "^0.0.1-security",
     "node": "^17.2.0",
+    "tsc": "^2.0.3",
     "typescript-require": "^0.3.0"
   }
 }

@@ -20,5 +20,5 @@ async function run() {
     const plugins = await pluginParse()
     console.log(plugins)
 }
-
+console.log("Test")
 run()
