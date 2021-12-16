@@ -15,11 +15,16 @@ export async function pluginParse() {
     const pluginFolder = process.env.PLUGIN_FOLDER
     if(!pluginFolder) { throw new Error("No plugin folder specified!") }
     const _plugins = readdirSync(pluginFolder)
+
     for (const plugin of _plugins) {
-        const config: config = require(path.join(pluginFolder, plugin, "config.json"))
+        console.log(plugin, readdirSync(path.join(pluginFolder, plugin)))
+
+        const config: config = require(pluginFolder + '/' + plugin + "/config.json")
+        
         if (debug) console.log(`Installing dependecies for ${plugin}!`)
         const { stdout, stderr } = await exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`)
         if (debug) console.log("Done!")
+        
         plugins[plugin] = {}
         plugins[plugin]['config'] = config
         plugins[plugin]['plugin'] = require(path.join(pluginFolder, plugin, 'index.js'))

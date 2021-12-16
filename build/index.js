@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = require("dotenv");
 const args_1 = require("./args");
 const plugins_1 = require("./plugins");
-dotenv_1.config();
-const args = args_1.argParse("", [
+(0, dotenv_1.config)();
+const args = (0, args_1.argParse)("", [
     {
         name: '--debug',
         alias: '-d',
@@ -25,10 +25,11 @@ const args = args_1.argParse("", [
 ]);
 process.env.DEBUG = "0";
 if (args.debug)
-    process.env.DEEBUG = "1";
+    process.env.DEBUG = "1";
+console.log(process.env.PLUGIN_FOLDER);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const plugins = yield plugins_1.pluginParse();
+        const plugins = yield (0, plugins_1.pluginParse)();
         console.log(plugins);
     });
 }
