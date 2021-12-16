@@ -8,11 +8,67 @@ export interface config {
     requires: string[]
 }
 
-async function formatJson(json: object) {
-    
+async function isIndent(set: string[]) {
+    if (set[0] != '') return false
+    if (set[1] != '') return false
+    if (set[2] != '') return false
+    if (set[3] != '') return false
+    return true
 }
-async function formatPlg(json: object) {
-    
+
+async function formatJson(json: any) {
+    const out: any = {}
+    for (const element in json) {
+        const elements: any[] = []
+        if (json[element].type == "func") {
+            for (const exec of json[element].exec) {
+                if (exec.type == "print") { elements.push([console.log, exec.data]) }
+            }
+            out[element] = function() {
+                for (const element of elements) {
+                    element[0](element[1])
+                }
+            }
+        }
+    }
+
+    return out
+}
+async function formatPlg(plg: string) {
+    const out: any = {}
+    plg = plg.replace(/\r/g, '')
+
+    const lines = plg.split('\n')
+    const push: any[] = []
+
+    for (var i = 0; i < lines.length; i++) {
+        const elements: any[] = []
+        var words = lines[i].split(" ")
+
+        if (words.shift() == 'func') {
+            elements[0] = words.shift()
+            while(true) {
+                i++
+                if (!lines[i]) break
+                words = lines[i].split(" ")
+                
+                if (await isIndent(words.slice(0, 4))) {
+                    words = words.slice(4)
+                    if (words.shift() == 'print') {
+                        const print = words.join(" ")
+                        elements.push([console.log, print])
+                    }
+                } else { i--; break }
+            }
+            out[elements.shift()] = function() {
+                for (const element of elements) {
+                    element[0](element[1])
+                }
+            }
+        }
+    }
+
+    return out
 }
 
 export async function pluginParse() {
@@ -26,7 +82,7 @@ export async function pluginParse() {
 
     for (const plugin of _plugins) {
         if (debug) console.log(`Loading plugin ${plugin}`)
-        
+
         const config: config = require(pluginFolder + '/' + plugin + "/config.json")
         
         if (debug) console.log(`Installing dependecies for ${plugin}!`)
@@ -41,7 +97,7 @@ export async function pluginParse() {
         } else if (config.type == 2) {
             plugins[plugin]['plugin'] = await formatJson(require(path.join(pluginFolder, plugin, 'index.json')))
         } else if (config.type == 3) {
-            plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')))
+            plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'))
         } else throw new Error(`Plugin type of ${config.type} is invalid!`)
 
         plugins[plugin]['plugin'].init()

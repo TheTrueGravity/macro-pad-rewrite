@@ -20,6 +20,8 @@ if (args.debug) process.env.DEBUG = "1"
 async function run() {
     const plugins = await pluginParse()
     if (debug) console.log(plugins)
+
+    plugins["example 3"].plugin.test()
 }
 
 run()

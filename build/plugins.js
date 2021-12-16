@@ -32,12 +32,76 @@ exports.pluginParse = void 0;
 const fs_1 = require("fs");
 const child_process_1 = require("child_process");
 const path = __importStar(require("path"));
-function formatJson(json) {
+function isIndent(set) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (set[0] != '')
+            return false;
+        if (set[1] != '')
+            return false;
+        if (set[2] != '')
+            return false;
+        if (set[3] != '')
+            return false;
+        return true;
     });
 }
-function formatPlg(json) {
+function formatJson(json) {
     return __awaiter(this, void 0, void 0, function* () {
+        const out = {};
+        for (const element in json) {
+            const elements = [];
+            if (json[element].type == "func") {
+                for (const exec of json[element].exec) {
+                    if (exec.type == "print") {
+                        elements.push([console.log, exec.data]);
+                    }
+                }
+                out[element] = function () {
+                    for (const element of elements) {
+                        element[0](element[1]);
+                    }
+                };
+            }
+        }
+        return out;
+    });
+}
+function formatPlg(plg) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const out = {};
+        plg = plg.replace(/\r/g, '');
+        const lines = plg.split('\n');
+        const push = [];
+        for (var i = 0; i < lines.length; i++) {
+            const elements = [];
+            var words = lines[i].split(" ");
+            if (words.shift() == 'func') {
+                elements[0] = words.shift();
+                while (true) {
+                    i++;
+                    if (!lines[i])
+                        break;
+                    words = lines[i].split(" ");
+                    if (yield isIndent(words.slice(0, 4))) {
+                        words = words.slice(4);
+                        if (words.shift() == 'print') {
+                            const print = words.join(" ");
+                            elements.push([console.log, print]);
+                        }
+                    }
+                    else {
+                        i--;
+                        break;
+                    }
+                }
+                out[elements.shift()] = function () {
+                    for (const element of elements) {
+                        element[0](element[1]);
+                    }
+                };
+            }
+        }
+        return out;
     });
 }
 function pluginParse() {
@@ -66,7 +130,7 @@ function pluginParse() {
                 plugins[plugin]['plugin'] = yield formatJson(require(path.join(pluginFolder, plugin, 'index.json')));
             }
             else if (config.type == 3) {
-                plugins[plugin]['plugin'] = yield formatPlg(fs_1.readFileSync(path.join(pluginFolder, plugin, 'index.plg')));
+                plugins[plugin]['plugin'] = yield formatPlg(fs_1.readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'));
             }
             else
                 throw new Error(`Plugin type of ${config.type} is invalid!`);
