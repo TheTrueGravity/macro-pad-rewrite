@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -40,13 +40,13 @@ function pluginParse() {
         if (!pluginFolder) {
             throw new Error("No plugin folder specified!");
         }
-        const _plugins = (0, fs_1.readdirSync)(pluginFolder);
+        const _plugins = fs_1.readdirSync(pluginFolder);
         for (const plugin of _plugins) {
-            console.log(plugin, (0, fs_1.readdirSync)(path.join(pluginFolder, plugin)));
+            console.log(plugin, fs_1.readdirSync(path.join(pluginFolder, plugin)));
             const config = require(pluginFolder + '/' + plugin + "/config.json");
             if (debug)
                 console.log(`Installing dependecies for ${plugin}!`);
-            const { stdout, stderr } = yield (0, child_process_1.exec)(`npm i ${config.requires.toString().replace(/,/g, ' ')}`);
+            const { stdout, stderr } = yield child_process_1.exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`);
             if (debug)
                 console.log("Done!");
             plugins[plugin] = {};
