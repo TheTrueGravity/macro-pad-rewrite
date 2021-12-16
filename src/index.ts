@@ -13,12 +13,13 @@ const args = argParse("", [
         }
     }
 ])
+const debug = args.debug
 process.env.DEBUG = "0"
 if (args.debug) process.env.DEBUG = "1"
 
 async function run() {
     const plugins = await pluginParse()
-    console.log(plugins)
+    if (debug) console.log(plugins)
 }
 
 run()

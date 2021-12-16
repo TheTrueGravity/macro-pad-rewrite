@@ -23,13 +23,15 @@ const args = args_1.argParse("", [
         }
     }
 ]);
+const debug = args.debug;
 process.env.DEBUG = "0";
 if (args.debug)
     process.env.DEBUG = "1";
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const plugins = yield plugins_1.pluginParse();
-        console.log(plugins);
+        if (debug)
+            console.log(plugins);
     });
 }
 run();

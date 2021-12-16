@@ -4,7 +4,7 @@ import * as path from 'path'
 
 export interface config {
     name: string
-    type: 1 | 2 | 3
+    type: number
     requires: string[]
 }
 
@@ -21,12 +21,12 @@ export async function pluginParse() {
     const plugins: any = {} 
 
     const pluginFolder = process.env.PLUGIN_FOLDER
-    if(!pluginFolder) { throw new Error("No plugin folder specified!") }
+    if(!pluginFolder) throw new Error("No plugin folder specified!")
     const _plugins = readdirSync(pluginFolder)
 
     for (const plugin of _plugins) {
-        console.log(plugin, readdirSync(path.join(pluginFolder, plugin)))
-
+        if (debug) console.log(`Loading plugin ${plugin}`)
+        
         const config: config = require(pluginFolder + '/' + plugin + "/config.json")
         
         if (debug) console.log(`Installing dependecies for ${plugin}!`)
@@ -42,7 +42,9 @@ export async function pluginParse() {
             plugins[plugin]['plugin'] = await formatJson(require(path.join(pluginFolder, plugin, 'index.json')))
         } else if (config.type == 3) {
             plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')))
-        }
+        } else throw new Error(`Plugin type of ${config.type} is invalid!`)
+
+        plugins[plugin]['plugin'].init()
     }
 
     return plugins
