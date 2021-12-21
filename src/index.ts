@@ -23,6 +23,8 @@ async function run() {
     if (debug) console.log(plugins)
 
     const controller = new Controller({ inputPort: "APC MINI", outputPort: "APC MINI" })
+
+    controller.input.on('message', console.log)
 }
 
 run()
