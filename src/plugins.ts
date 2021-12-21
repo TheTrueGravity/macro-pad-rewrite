@@ -5,10 +5,11 @@ import * as path from 'path'
 export interface config {
     name: string
     type: number
+    enabled: boolean
     requires: string[]
 }
 
-async function isIndent(set: string[]) {
+/* async function isIndent(set: string[]) {
     if (set[0] != '') return false
     if (set[1] != '') return false
     if (set[2] != '') return false
@@ -69,7 +70,7 @@ async function formatPlg(plg: string) {
     }
 
     return out
-}
+} */
 
 export async function pluginParse() {
     const debug = process.env.DEBUG == "0" ? false : true
@@ -81,26 +82,30 @@ export async function pluginParse() {
     const _plugins = readdirSync(pluginFolder)
 
     for (const plugin of _plugins) {
-        if (debug) console.log(`Loading plugin ${plugin}`)
-
         const config: config = require(pluginFolder + '/' + plugin + "/config.json")
-        
-        if (debug) console.log(`Installing dependecies for ${plugin}!`)
-        const { stdout, stderr } = await exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`)
-        if (debug) console.log("Done!")
-        
-        plugins[plugin] = {}
-        plugins[plugin]['config'] = config
 
-        if (config.type == 1) {
-            plugins[plugin]['plugin'] = require(path.join(pluginFolder, plugin, 'index.js'))
-        } else if (config.type == 2) {
-            plugins[plugin]['plugin'] = await formatJson(require(path.join(pluginFolder, plugin, 'index.json')))
-        } else if (config.type == 3) {
-            plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'))
-        } else throw new Error(`Plugin type of ${config.type} is invalid!`)
+        if (config.enabled != false) {
+            if (debug) console.log(`Loading plugin ${plugin}`)
 
-        plugins[plugin]['plugin'].init()
+            if (debug) console.log(`Installing dependecies for ${plugin}!`)
+            const { stdout, stderr } = await exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`)
+            if (debug) console.log("Done!")
+            
+            plugins[plugin] = {}
+            plugins[plugin]['config'] = config
+    
+            if (config.type == 1) {
+                plugins[plugin]['plugin'] = require(path.join(pluginFolder, plugin, 'index.js'))
+            } else if (config.type == 2) {
+                throw new Error(`Plugin of type ${config.type} is not enabled!`)
+                // plugins[plugin]['plugin'] = await formatJson(require(path.join(pluginFolder, plugin, 'index.json')))
+            } else if (config.type == 3) {
+                throw new Error(`Plugin of type ${config.type} is not enabled!`)
+                // plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'))
+            } else throw new Error(`Plugin type of ${config.type} is invalid!`)
+    
+            plugins[plugin]['plugin'].init()
+        }
     }
 
     return plugins

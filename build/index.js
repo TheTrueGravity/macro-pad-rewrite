@@ -32,7 +32,6 @@ function run() {
         const plugins = yield plugins_1.pluginParse();
         if (debug)
             console.log(plugins);
-        plugins["example 3"].plugin.test();
     });
 }
 run();

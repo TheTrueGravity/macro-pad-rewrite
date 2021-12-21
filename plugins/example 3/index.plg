@@ -1,5 +1,1 @@
 func init
-    print Hello world from example 3!
-
-func test
-    print Hello

@@ -1,6 +1,6 @@
 {
     "init": {
         "type": "func",
-        "exec": [ {"type": "print", "data": "Hello world from example 2!"} ]
+        "exec": []
     }
 }

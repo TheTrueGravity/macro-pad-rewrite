@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { argParse } from './args'
 import { pluginParse } from './plugins'
+import { Controller } from './midi'
 
 config()
 const args = argParse("", [
@@ -21,7 +22,7 @@ async function run() {
     const plugins = await pluginParse()
     if (debug) console.log(plugins)
 
-    plugins["example 3"].plugin.test()
+    const controller = new Controller({ inputPort: "APC MINI", outputPort: "APC MINI" })
 }
 
 run()

@@ -1,5 +1,6 @@
 {
     "name": "test 2",
     "type": 2,
+    "enabled": false,
     "requires": []
 }

@@ -113,28 +113,32 @@ function pluginParse() {
             throw new Error("No plugin folder specified!");
         const _plugins = fs_1.readdirSync(pluginFolder);
         for (const plugin of _plugins) {
-            if (debug)
-                console.log(`Loading plugin ${plugin}`);
             const config = require(pluginFolder + '/' + plugin + "/config.json");
-            if (debug)
-                console.log(`Installing dependecies for ${plugin}!`);
-            const { stdout, stderr } = yield child_process_1.exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`);
-            if (debug)
-                console.log("Done!");
-            plugins[plugin] = {};
-            plugins[plugin]['config'] = config;
-            if (config.type == 1) {
-                plugins[plugin]['plugin'] = require(path.join(pluginFolder, plugin, 'index.js'));
+            if (config.enabled != false) {
+                if (debug)
+                    console.log(`Loading plugin ${plugin}`);
+                if (debug)
+                    console.log(`Installing dependecies for ${plugin}!`);
+                const { stdout, stderr } = yield child_process_1.exec(`npm i ${config.requires.toString().replace(/,/g, ' ')}`);
+                if (debug)
+                    console.log("Done!");
+                plugins[plugin] = {};
+                plugins[plugin]['config'] = config;
+                if (config.type == 1) {
+                    plugins[plugin]['plugin'] = require(path.join(pluginFolder, plugin, 'index.js'));
+                }
+                else if (config.type == 2) {
+                    throw new Error(`Plugin of type ${config.type} is not enabled!`);
+                    // plugins[plugin]['plugin'] = await formatJson(require(path.join(pluginFolder, plugin, 'index.json')))
+                }
+                else if (config.type == 3) {
+                    throw new Error(`Plugin of type ${config.type} is not enabled!`);
+                    // plugins[plugin]['plugin'] = await formatPlg(readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'))
+                }
+                else
+                    throw new Error(`Plugin type of ${config.type} is invalid!`);
+                plugins[plugin]['plugin'].init();
             }
-            else if (config.type == 2) {
-                plugins[plugin]['plugin'] = yield formatJson(require(path.join(pluginFolder, plugin, 'index.json')));
-            }
-            else if (config.type == 3) {
-                plugins[plugin]['plugin'] = yield formatPlg(fs_1.readFileSync(path.join(pluginFolder, plugin, 'index.plg')).toString('utf-8'));
-            }
-            else
-                throw new Error(`Plugin type of ${config.type} is invalid!`);
-            plugins[plugin]['plugin'].init();
         }
         return plugins;
     });
