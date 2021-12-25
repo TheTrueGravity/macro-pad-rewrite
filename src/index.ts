@@ -22,9 +22,7 @@ async function run() {
     const plugins = await pluginParse()
     if (debug) console.log(plugins)
 
-    const controller = new Controller({ inputPort: "APC MINI", outputPort: "APC MINI" })
-
-    controller.input.on('message', console.log)
+    const controller = new Controller("APC MINI")
 }
 
 run()

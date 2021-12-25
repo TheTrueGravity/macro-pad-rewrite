@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = require("dotenv");
 const args_1 = require("./args");
 const plugins_1 = require("./plugins");
+const midi_1 = require("./midi");
 dotenv_1.config();
 const args = args_1.argParse("", [
     {
@@ -32,6 +33,8 @@ function run() {
         const plugins = yield plugins_1.pluginParse();
         if (debug)
             console.log(plugins);
+        const controller = new midi_1.Controller("APC MINI");
+        controller.input.on('message', console.log);
     });
 }
 run();

@@ -32,78 +32,68 @@ exports.pluginParse = void 0;
 const fs_1 = require("fs");
 const child_process_1 = require("child_process");
 const path = __importStar(require("path"));
-function isIndent(set) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (set[0] != '')
-            return false;
-        if (set[1] != '')
-            return false;
-        if (set[2] != '')
-            return false;
-        if (set[3] != '')
-            return false;
-        return true;
-    });
+/* async function isIndent(set: string[]) {
+    if (set[0] != '') return false
+    if (set[1] != '') return false
+    if (set[2] != '') return false
+    if (set[3] != '') return false
+    return true
 }
-function formatJson(json) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const out = {};
-        for (const element in json) {
-            const elements = [];
-            if (json[element].type == "func") {
-                for (const exec of json[element].exec) {
-                    if (exec.type == "print") {
-                        elements.push([console.log, exec.data]);
-                    }
+
+async function formatJson(json: any) {
+    const out: any = {}
+    for (const element in json) {
+        const elements: any[] = []
+        if (json[element].type == "func") {
+            for (const exec of json[element].exec) {
+                if (exec.type == "print") { elements.push([console.log, exec.data]) }
+            }
+            out[element] = function() {
+                for (const element of elements) {
+                    element[0](element[1])
                 }
-                out[element] = function () {
-                    for (const element of elements) {
-                        element[0](element[1]);
-                    }
-                };
             }
         }
-        return out;
-    });
+    }
+
+    return out
 }
-function formatPlg(plg) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const out = {};
-        plg = plg.replace(/\r/g, '');
-        const lines = plg.split('\n');
-        const push = [];
-        for (var i = 0; i < lines.length; i++) {
-            const elements = [];
-            var words = lines[i].split(" ");
-            if (words.shift() == 'func') {
-                elements[0] = words.shift();
-                while (true) {
-                    i++;
-                    if (!lines[i])
-                        break;
-                    words = lines[i].split(" ");
-                    if (yield isIndent(words.slice(0, 4))) {
-                        words = words.slice(4);
-                        if (words.shift() == 'print') {
-                            const print = words.join(" ");
-                            elements.push([console.log, print]);
-                        }
+async function formatPlg(plg: string) {
+    const out: any = {}
+    plg = plg.replace(/\r/g, '')
+
+    const lines = plg.split('\n')
+    const push: any[] = []
+
+    for (var i = 0; i < lines.length; i++) {
+        const elements: any[] = []
+        var words = lines[i].split(" ")
+
+        if (words.shift() == 'func') {
+            elements[0] = words.shift()
+            while(true) {
+                i++
+                if (!lines[i]) break
+                words = lines[i].split(" ")
+                
+                if (await isIndent(words.slice(0, 4))) {
+                    words = words.slice(4)
+                    if (words.shift() == 'print') {
+                        const print = words.join(" ")
+                        elements.push([console.log, print])
                     }
-                    else {
-                        i--;
-                        break;
-                    }
+                } else { i--; break }
+            }
+            out[elements.shift()] = function() {
+                for (const element of elements) {
+                    element[0](element[1])
                 }
-                out[elements.shift()] = function () {
-                    for (const element of elements) {
-                        element[0](element[1]);
-                    }
-                };
             }
         }
-        return out;
-    });
-}
+    }
+
+    return out
+} */
 function pluginParse() {
     return __awaiter(this, void 0, void 0, function* () {
         const debug = process.env.DEBUG == "0" ? false : true;

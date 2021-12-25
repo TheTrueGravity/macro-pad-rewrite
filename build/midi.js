@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Output = exports.Input = void 0;
+exports.Controller = exports.Output = exports.Input = void 0;
 const { input, output } = require('midi');
 class Input extends input {
     constructor(port, autoConnect = true) {
@@ -90,3 +90,22 @@ class Output extends output {
     }
 }
 exports.Output = Output;
+class Controller {
+    constructor(config) {
+        if (typeof config == "string") {
+            this._input = new Input(config);
+            this._output = new Output(config);
+        }
+        else {
+            this._input = new Input(config.inputPort);
+            this._output = new Output(config.inputPort);
+        }
+    }
+    get input() {
+        return this._input;
+    }
+    get output() {
+        return this._output;
+    }
+}
+exports.Controller = Controller;

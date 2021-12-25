@@ -101,8 +101,13 @@ export class Controller {
         return this._output
     }
 
-    constructor (config: controllerConfig) {
-        this._input = new Input(config.inputPort)
-        this._output = new Output(config.inputPort)
+    constructor (config: controllerConfig | string) {
+        if (typeof config == "string") {
+            this._input = new Input(config)
+            this._output = new Output(config)
+        } else {
+            this._input = new Input(config.inputPort)
+            this._output = new Output(config.inputPort)
+        }
     }
 }
